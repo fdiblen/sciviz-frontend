@@ -1,6 +1,10 @@
-# spot2
+# sciviz
 
-> SPOT2
+> sciviz
+
+
+[http://sciviz.netlify.com](http://sciviz.netlify.com)
+
 
 ## Build Setup
 

@@ -7,13 +7,29 @@
       <v-card v-if="numberOfDatasets == 0">
                 <v-alert
                 :value="true"
-                color="error"
+                color="warning"
                 icon="new_releases"
                 class="headline"
                 >
-                No datasets were found!
+
+                <v-layout row align-center justify-center>
+                  <v-flex xs6>
+                      <span> No dataset found! Please add a dataset.</span>
+                  </v-flex>
+
+                  <v-flex xs6>
+                      <img class=""
+                        height=""
+                        src="~/assets/images/help/add_dataset.gif"
+                      >
+                  </v-flex>
+                </v-layout>
+
                 </v-alert>
+
       </v-card>
+
+
 
       <v-card v-else>
 
@@ -105,7 +121,7 @@
         removedataset(id) {
             console.log('called Datasets::removedataset()')
             this.$store.commit('removedataset', id)
-        }        
+        }
     }
   }
 </script>

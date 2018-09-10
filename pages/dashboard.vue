@@ -1,44 +1,81 @@
 <template>
     <div>
-    
+
         <v-layout row align-center justify-center>
             <v-flex xs12>
-    
+
+                <v-card v-if="numberOfTotalWidgets == 0">
+                    <v-alert
+                    :value="true"
+                    color="warning"
+                    icon="new_releases"
+                    class="headline"
+                    >
+
+                    <v-layout row align-center justify-center>
+                      <v-flex xs6>
+                          <span> No widget found! Please add a new widget.</span>
+                      </v-flex>
+
+                      <v-flex xs6>
+                          <img class=""
+                            height=""
+                            src="~/assets/images/help/add_chart.gif"
+                          >
+                      </v-flex>
+                    </v-layout>
+
+                    </v-alert>
+
+                </v-card>
+
+
                 <div ref="gridLayout">
-    
+
                     <grid-layout :layout="widgetLayout" :col-num="numberOfTotalColumns" :col-width="widgetNumberOfColums" :row-height="rowHeight" :margin="[widgetMarginX, widgetMarginY]" :is-draggable="true" :is-resizable="true" :is-mirrored="false" :vertical-compact="true"
                         :use-css-transforms="false" @layout-updated="layoutUpdatedEvent" class="">
-    
+
                         <grid-item v-for="item in widgetLayout" :key="item.i" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" :autoSize="true" @resize="resizeEvent" @resized="resizedEvent" @move="moveEvent" @moved="movedEvent" dragAllowFrom=".vue-draggable-handle">
-    
+
                             <div style="border: 1px solid green">
-    
-                                <spot-chart v-if="item.type == 'chart'" :type="item.type" :id="item.chartId" :title="item.i" :width="item.chartWidth" :height="item.chartHeight" @onClickDelete="onChartDeleteButton" @onClickEdit="onChartEditButton" @onClickSave="onChartSaveButton" />
-    
-                                <data-table v-if="item.type == 'table'" :type="item.type" :id="item.chartId" :title="item.i" :width="item.chartWidth" :height="item.chartHeight" @onClickDelete="onChartDeleteButton" />
-    
+
+                                <sciviz-chart v-if="item.type == 'chart'"
+                                  :type="item.type"
+                                  :id="item.widgetId"
+                                  :title="item.i"
+                                  :width="item.chartWidth"
+                                  :height="item.chartHeight"
+                                  :chartSpec="item.chartSpec"
+                                  @onClickDelete="onChartDeleteButton"
+                                  @onClickEdit="onChartEditButton"
+                                  @onClickSave="onChartSaveButton"
+                                  @onClickAddFilter="onChartAddFilterButton"
+                                  />
+
+                                <data-table v-if="item.type == 'table'" :type="item.type" :id="item.widgetId" :title="item.i" :width="item.chartWidth" :height="item.chartHeight" @onClickDelete="onChartDeleteButton" />
+
                             </div>
-    
+
                         </grid-item>
-    
+
                     </grid-layout>
                 </div>
-    
+
                 <!-- speed dial menu -->
                 <v-speed-dial v-model="speedDialMenu" direction="top" transition="slide-y-reverse-transition" :open-on-hover="false" fixed bottom right>
                     <v-btn slot="activator" v-model="speedDialMenu" color="blue darken-2" dark fab>
                         <v-icon>add</v-icon>
                         <v-icon>close</v-icon>
                     </v-btn>
-    
-    
+
+
                     <v-tooltip left>
                         <v-btn fab dark small color="green" @click="addWidget('chart')" slot="activator">
                             <v-icon>show_chart</v-icon>
                         </v-btn>
                         <span>Add a chart</span>
                     </v-tooltip>
-    
+
                     <v-tooltip left>
                         <v-btn fab dark small color="green" @click="addWidget('table')" slot="activator">
                             <v-icon>table_chart</v-icon>
@@ -55,18 +92,26 @@
 
 
                 </v-speed-dial>
-    
-    
+
+
             </v-flex>
-        </v-layout>
-    
+        </v-layout><!-- gridLayout -->
+
     </div>
 </template>
 
 <script>
-import VueGridLayout from 'vue-grid-layout'
+
+
+
+if (process.browser) {
+  var VueGridLayout =  require('vue-grid-layout');
+// import VueGridLayout from 'vue-grid-layout'
 var GridLayout = VueGridLayout.GridLayout;
 var GridItem = VueGridLayout.GridItem;
+}
+
+
 
 import ChartWidget from '~/components/charts/ChartWidget'
 import DataTableWidget from '~/components/tables/DataTableWidget'
@@ -78,7 +123,7 @@ export default {
     components: {
         'grid-layout': GridLayout,
         'grid-item': GridItem,
-        'spot-chart': ChartWidget,
+        'sciviz-chart': ChartWidget,
         'data-table': DataTableWidget
     },
     data() {
@@ -110,8 +155,13 @@ export default {
 
         widgetLayout (){
             return this.$store.getters.widgets
+        },
+        numberOfTotalWidgets (){
+            return this.$store.getters.numberOfWidgets
+        },
+        numberOfTotalDatasets (){
+            return this.$store.getters.numberOfDatasets
         }
-
     },
     methods: {
         layoutUpdatedEvent(newLayout) {
@@ -137,24 +187,10 @@ export default {
         addWidget(widgetType) {
             console.log('called WidgetFactory::addWidget()')
             console.log("widgetType:", widgetType)
-            console.log('Adding a new chart')
-            // console.log(this.widgetLayout)
-            // console.log(this.widgetLayout.length)
+            console.log('Adding a new widget')
 
-            // var chartXPos = (this.widgetLayout.length % (this.numberOfTotalColumns / this.chartnumberOfTotalColumns)) * this.chartnumberOfTotalColumns
-            // var chartYPos = ( Math.floor(this.widgetLayout.length / (this.numberOfTotalColumns / this.chartnumberOfTotalColumns)) )
-
-            // console.log('xnewPos:', chartXPos, 'ynewPos:', chartYPos)
-            // console.log('this.widgetLayout.length:', this.widgetLayout.length)
-
-            // const chart = {
-            //   "x":chartXPos,"y":chartYPos,"w":this.chartnumberOfTotalColumns,"h":this.widgetNumberOfRows,"i":this.widgetLayout.length,"chartWidth": 0,"chartHeight": 0
-            // }
-            // this.widgetLayout.push(chart)
-
-
-            var chartId = this.generateUuid()
-            console.log('Chart id:', chartId)
+            var widgetId = this.generateUuid()
+            console.log('Widget id:', widgetId)
 
             const gridWidth = this.$refs.gridLayout.clientWidth;
             console.log('grid width:', gridWidth)
@@ -165,22 +201,8 @@ export default {
             console.log('numberOfWidgetX:', numberOfWidgetX)
             console.log('widget width:', widgetWidth)
 
-
-
-            // const chart = {
-            //   "type": "chart",
-            //   "chartType":"bubble_chart",
-            //   "x":0, "y":0,
-            //   "w":this.chartnumberOfTotalColumns, 
-            //   "h":this.widgetNumberOfRows,
-            //   "i":this.widgetLayout.length,
-            //   "chartWidth": 0, "chartHeight": 0,
-            //   "chartId": chartId
-            // }
-
-            const chartTouch = {
+            var widgetTouch = {
                 "type": widgetType,
-                "chartType": "bubble_chart",
                 "x": 0,
                 "y": 0,
                 "w": this.widgetNumberOfColums,
@@ -188,7 +210,7 @@ export default {
                 "i": this.widgetLayout.length,
                 "chartWidth": widgetWidth,
                 "chartHeight": 400,
-                "chartId": chartId,
+                "widgetId": widgetId,
                 "sm-x": 1,
                 "sm-y": 1,
                 "sm-w": 12,
@@ -197,10 +219,15 @@ export default {
                 "sm-resizable": false
             }
 
-            //        this.widgetLayout.push(chart)
+            if ( widgetType == 'chart' ) {
+                widgetTouch = {...widgetTouch,
+                     "chartType": "",
+                    "chartSpec": this.$store.getters.vegaSpec
+                  }
+             }
 
-            this.widgetLayout.push(chartTouch)
-
+            this.$store.commit('addChart', widgetTouch)
+            // this.widgetLayout.push(widgetTouch)
             // console.log(this.widgetLayout)
 
         },
@@ -221,34 +248,100 @@ export default {
           this.$store.commit('addDataset', testData)
 
           console.log('store:data', this.$store.getters.data[0])
-
-
         },
-        onChartDeleteButton(signalValue, chartId) {
+        onChartDeleteButton(signalValue, widgetId) {
             console.log('called onChartDeleteButton()')
-            // console.log(signalValue)
-            // console.log(chartId)
 
-
-            // console.log('Searching...')
-            const index = this.widgetLayout.findIndex(chart => chart.chartId === chartId)
-            // console.log(index)
-            // console.log(this.widgetLayout[index])
-
-
+            const index = this.widgetLayout.findIndex(widget => widget.widgetId === widgetId)
             this.widgetLayout.splice(index, 1)
-            // console.log(this.widgetLayout)
-
         },
-        onChartEditButton(signalValue, chartId) {
+        onChartEditButton(signalValue, widgetId) {
             console.log('called onChartEditButton()')
-            // console.log(signalValue)
-            // console.log(chartId)
         },
-        onChartSaveButton(signalValue, chartId) {
+        onChartSaveButton(signalValue, widgetId) {
             console.log('called onChartSaveButton()')
-            // console.log(signalValue)
-            // console.log(chartId)
+        },
+        onChartAddFilterButton(signalValue, widgetId) {
+            console.log('called onChartAddFilterButton()')
+
+            const index = this.widgetLayout.findIndex(widget => widget.widgetId === widgetId)
+            // this.widgetLayout[index].chartSpec.mark = "circle"
+
+            var newFilter = { "brushX": {"type": "interval", "encodings": ["x"]} }
+            // var newFilter = {
+            //   "brush": {
+            //     "type": "interval",
+            //     "on": "[mousedown[event.shiftKey], window:mouseup] > window:mousemove!",
+            //     "translate": "[mousedown[event.shiftKey], window:mouseup] > window:mousemove!",
+            //     "zoom": "wheel![event.shiftKey]"
+            //   }
+            // }
+
+            //                 "resolve": "union",
+           this.$store.commit('addChartFilter', newFilter)
+
+            // this.widgetLayout[index].chartSpec = {...this.widgetLayout[index].chartSpec,
+            //     "selection": {
+            //       ...newFilter
+            //     }
+            // }
+
+
+            this.widgetLayout[index].chartSpec = {...this.widgetLayout[index].chartSpec,
+                "selection": {
+                  ...this.$store.getters.vegaFilters[0]
+                }
+            }
+
+
+
+
+
+            if ( this.$store.getters.numberOfWidgets > 1 ) {
+
+              console.log('Found', this.$store.getters.numberOfVegaFilters, 'filters.')
+              console.log('Applying the filter:')
+              console.log(this.$store.getters.vegaFilters[0])
+
+              // this.widgetLayout[index].chartSpec = {...this.widgetLayout[index].chartSpec,
+              //     "color": {
+              //       "condition": {"selection": this.$store.getters.vegaFilters[0], "field": "Origin", "type": "nominal"},
+              //       "value": "grey"
+              //     }
+              // }
+
+              // var newSelector = {
+              //     "scale": {
+              //       "domain":
+              //         {
+              //           "selection": this.$store.getters.widgets[0].chartSpec.selection[0]
+              //         }
+              //     }
+              // }
+
+
+              var newSelector = {
+                  "scale": {
+                    "domain":
+                      {
+                        "selection": this.$store.getters.vegaFilters[0]
+                      }
+                  }
+              }
+
+
+              // this.widgetLayout[index].chartSpec.encoding.x = {...this.widgetLayout[index].chartSpec.encoding.x,
+              //     ...newSelector
+              // }
+
+              this.$store.commit('applyChartFilter', {widgetId, newSelector})
+
+            }
+
+
+
+
+
         },
         generateUuid() {
             console.log('called generateUuid()')
@@ -264,20 +357,20 @@ export default {
 
 <style>
 .vue-grid-item {
-    @media screen and (max-width: $mobile-break) {
-        width:100%;
-        height: auto;
-        position: relative;
-        margin-top: $padding;
-        transform: inherit;
-    }
+  @media screen and (max-width: $mobile-break) {
+    width: 100%;
+    height: auto;
+    position: relative;
+    margin-top: $padding;
+    transform: inherit;
+  }
 }
 
 .vue-grid-item.vue-grid-placeholder {
-    background: white;
+  background: white;
 }
 
 .vue-grid-item.vue-grid-placeholder {
-    background-color: white;
+  background-color: white;
 }
 </style>

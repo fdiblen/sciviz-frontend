@@ -1,15 +1,15 @@
 <template>
     <div>
-    
+
         <v-card :height="height" :width="width" @resize="resizeCardEvent">
             <v-toolbar color="secondary" height="50px" dark class="vue-draggable-handle">
                 <v-icon>{{type}}</v-icon>
-    
+
                 <v-toolbar-title>Chart {{title}}</v-toolbar-title>
-    
+
                 <v-spacer></v-spacer>
-    
-    
+
+
                 <!-- menu button -->
                 <v-menu v-model="menu" :close-on-content-click="false" :nudge-width="200" offset-y>
                     <v-btn slot="activator" color="primary" dark icon>
@@ -18,37 +18,37 @@
                             <v-icon>more_vert</v-icon>
                         </v-badge>
                         <v-icon v-else>more_vert</v-icon>
-    
+
                     </v-btn>
-    
-    
+
+
                     <!-- menu when the more button is clicked -->
                     <v-card width="250">
                         <v-list v-if="numSelectedVariables == 0">
                             <v-list-tile>
-    
+
                                 <v-list-tile-action>
                                     <v-icon color="red">warning</v-icon>
                                 </v-list-tile-action>
-    
+
                                 <v-list-tile-content>
                                     <v-list-tile-title small>No variables selected!</v-list-tile-title>
                                 </v-list-tile-content>
-    
+
                             </v-list-tile>
                         </v-list>
-    
+
                         <v-divider></v-divider>
-    
+
                         <v-list-tile>
-    
+
                             <v-list-tile-content>
-    
+
                                 <!-- variable selection -->
-                                <v-combobox height="50px" v-model="selectedVariables" 
-                                            :items="variableOptions" label="X-axis" 
+                                <v-combobox height="50px" v-model="selectedVariables"
+                                            :items="variableOptions" label="X-axis"
                                             clearable prepend-icon="filter_list"
-                                            solo :multiple="false" 
+                                            solo :multiple="false"
                                             @change="variableSelected">
                                     <template slot="selection" slot-scope="data">
                                         <v-chip
@@ -100,7 +100,18 @@
                     </v-list-tile-action>
                   </v-list-tile>
 
-                  <v-divider></v-divider>                  
+                  <v-divider></v-divider>
+
+                  <v-list-tile>
+                    <v-list-tile-title>Add filter</v-list-tile-title>
+                    <v-list-tile-action>
+                      <v-btn icon @click="onClickAddFilter">
+                        <v-icon>filter_list</v-icon>
+                      </v-btn>
+                    </v-list-tile-action>
+                  </v-list-tile>
+
+                  <v-divider></v-divider>
 
                   <v-list-tile>
                     <v-list-tile-action>
@@ -125,7 +136,9 @@
 
           <chart-base-vega
           :width="canvasWidth"
-          :height="canvasHeight"/>
+          :height="canvasHeight"
+          :spec="chartSpec"
+          />
 
 
           <edit-chart :visible="showEditChartDialog" @close="showEditChartDialog = false"></edit-chart>
@@ -140,7 +153,7 @@ import ChartBaseVega from '~/components/charts/vega/ChartBaseVega'
 
 export default {
     name: 'Chart',
-    props: ['type', 'id', 'title', 'width', 'height'],
+    props: ['type', 'id', 'title', 'width', 'height', 'chartSpec'],
     components: {
         EditChart,
         ChartBaseVega
@@ -202,6 +215,11 @@ export default {
             console.log('chart id', this.id)
             this.$emit('onClickSave', 'someValue', this.id)
         },
+        onClickAddFilter () {
+            console.log('called onClickAddFilter()')
+            console.log('chart id', this.id)
+            this.$emit('onClickAddFilter', 'someValue', this.id)
+        },
         onClickSpeedDialDelete() {
             console.log('called onClickSpeedDialDelete()')
             this.$emit('onClickDelete', 'someValue', this.id)
@@ -225,12 +243,13 @@ export default {
 
 <style scoped>
 #create .v-speed-dial {
-    position: absolute;
+  position: absolute;
 }
 
 #create .v-btn--floating {
-    position: relative;
+  position: relative;
 }
 
-.vue-resizable-handle {}
+.vue-resizable-handle {
+}
 </style>

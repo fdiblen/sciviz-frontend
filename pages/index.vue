@@ -5,12 +5,12 @@
 
       </div>
       <v-card round>
-        <v-card-title class="headline">Welcome to SPOT</v-card-title>
+        <v-card-title class="headline">Welcome to Sciviz</v-card-title>
         <v-card-text>
-          <p>SPOT is a...</p>
-          <p>For more information on SPOT, check out the <a href="https://github.com/nlesc/spot" target="_blank">the code</a>.</p>
+          <p>Sciviz is a...</p>
+          <p>For more information on Sciviz, check out the <a href="https://github.com/sciviz" target="_blank">the code</a>.</p>
           <div class="text-xs-right">
-            <em><small>&mdash; NLeSC SPOT Team</small></em>
+            <em><small>&mdash; NLeSC Sciviz Team</small></em>
           </div>
           <hr class="my-3">
           <a href="https://www.esciencecenter.nl/" target="_blank">NLeSC website</a>
@@ -22,7 +22,7 @@
           <v-btn color="primary" flat nuxt to="/dashboard">Dashboard</v-btn>
         </v-card-actions>
       </v-card>
-    </v-flex>
+      </v-flex>
   </v-layout>
 </template>
 
@@ -33,3 +33,16 @@ export default {
   }
 }
 </script>
+
+
+<style>
+html,
+/* body {
+  margin: 0;
+  padding: 0;
+} */
+.shader {
+  width: 100vw;
+  height: 100vh;
+}
+</style>

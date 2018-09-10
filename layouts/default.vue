@@ -35,9 +35,9 @@
             <a href="https://www.esciencecenter.nl/"
             target="_blank" rel="noopener noreferrer"
             >
-              <img class="nlesc-logo" 
+              <img class="nlesc-logo"
                 height="50px"
-                src="~/assets/images/nlesc_logo.jpg" 
+                src="~/assets/images/nlesc_logo.jpg"
               >
             </a>
           </v-list-tile-content>
@@ -59,8 +59,30 @@
           active-class="blue--text"
         >
           <v-list-tile-action>
-            <v-icon v-if="miniVariant" x-large v-html="item.icon"></v-icon>
-            <v-icon v-else v-html="item.icon"></v-icon>
+
+
+
+
+            <span v-if="miniVariant"> <!-- mini variant -->
+
+                <span v-if="item.icon == 'dashboard'"> <!-- dashboard -->
+                    <v-badge small v-if="numberOfTotalDatasets !== 0" color="green">
+                        <span slot="badge">{{numberOfTotalDatasets}}</span>
+                        <v-icon x-large v-html="item.icon"></v-icon>
+                    </v-badge>
+                    <v-icon v-else x-large v-html="item.icon"></v-icon>
+                </span> <!-- dashboard -->
+
+                <span v-else>
+                    <v-icon x-large v-html="item.icon"></v-icon>
+                </span>
+            </span> <!-- mini variant -->
+
+            <span v-else> <!-- full drawer -->
+                <v-icon v-html="item.icon"></v-icon>
+            </span> <!-- full drawer -->
+
+
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title v-text="item.title"></v-list-tile-title>
@@ -85,7 +107,7 @@
 
 
 
-      <v-btn 
+      <v-btn
         v-if="!miniVariant"
         @click.stop="darkTheme = !darkTheme"
       >
@@ -94,7 +116,7 @@
         <v-icon>invert_colors</v-icon>
       </v-btn>
 
-      <v-btn 
+      <v-btn
         v-if="!miniVariant"
         @click.stop="showFooter = !showFooter"
       >
@@ -177,7 +199,7 @@
     },
     data() {
       return {
-        title: 'SPOT',
+        title: this.pageName,
         darkTheme: false,
         miniVariant: false,
         clipped: false,
@@ -188,9 +210,9 @@
         showMainSettings: false,
         items: [
           { icon: 'home', title: 'Home', to: '/' },
-          { icon: 'dashboard', title: 'Dashboard', to: '/dashboard' },
           { icon: 'folder', title: 'Datasets', to: '/datasets' },
-          { icon: 'accessibility', title: 'Test', to: '/test' },
+          { icon: 'dashboard', title: 'Dashboard', to: '/dashboard' },
+          { icon: 'accessibility', title: 'Test', to: '' },
           { icon: 'account_circle', title: 'Account', to: '' },
           { icon: 'history', title: 'History', to: '' },
           { icon: 'share', title: 'Share', to: '' }
@@ -202,13 +224,20 @@
         'fab fa-youtube'
         ]
       }
+    },
+    computed: {
+      pageName() {
+        return this.$nuxt.$route.name
+      },
+      numberOfTotalDatasets (){
+          return this.$store.getters.numberOfDatasets
+      }
     }
   }
 </script>
 
 
 <style scoped>
-
 .nlesc-logo {
   -webkit-filter: grayscale(100%);
   -moz-filter: grayscale(100%);
@@ -230,11 +259,9 @@
   -webkit-transition: all 0.15s ease-in-out 0s;
 }
 
-
-
-  .fa-cog {
-    width: 250px !important;
-    height: 250px !important;
-    color: aquamarine;
-  }
+.fa-cog {
+  width: 250px !important;
+  height: 250px !important;
+  color: aquamarine;
+}
 </style>

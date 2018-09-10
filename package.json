@@ -1,11 +1,13 @@
 {
-  "name": "spot2",
-  "version": "2.0.0",
-  "description": "SPOT Nuxt",
+  "name": "sciviz",
+  "version": "1.0.0",
+  "description": "Scitientific visualization",
   "author": "Faruk D.",
+  "license": "Apache-2.0",
   "private": true,
   "scripts": {
     "dev": "nuxt",
+    "dev-debug": "node --inspect node_modules/.bin/nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
