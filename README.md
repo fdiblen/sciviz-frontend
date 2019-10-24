@@ -1,10 +1,6 @@
-# sciviz
+# sciviz-frontend
 
-> sciviz
-
-
-[http://sciviz.netlify.com](http://sciviz.netlify.com)
-
+Frontend for https://github.com/fdiblen/sciviz-backend
 
 ## Build Setup
 
